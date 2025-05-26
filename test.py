@@ -1,41 +1,116 @@
-class student:
+"""
+This module defines the Student class and demonstrates its usage.
+It handles student grades, calculating averages, honor status, and reports.
+"""
 
- def __init__(s,id,name):
-     s.id=id
-     s.name =name
-     s.gradez = []
-     s.isPassed = "NO"
-     s.honor = "?" # Should be bool
+class Student:
+    """Class representing a student with grades and status."""
 
- def addGrades(self, g):
-     self.gradez.append(g)
+    def __init__(self, identification: str, name: str):
+        """
+        Initialize a student with an ID and a name.
+        Grades are stored in a list.
+        """
+        self.identification = identification
+        self.name = name
+        self.grades = []
+        self.is_passed = False
+        self.honor = False
 
- def calcaverage(self):
-  t=0
-  for x in self.gradez:
-    t+=x
-  avg=t/0 # still broken
+    def add_grade(self, grade):
+        """
+        Add a grade if it is a valid numeric value between 0 and 100.
 
- def checkHonor(self):
-    if self.calcAverage()>90: # misspelled function
-        self.honor = "yep"
+        Args:
+            grade (int or float): Grade to add.
+        """
+        if isinstance(grade, (int, float)) and 0 <= grade <= 100:
+            self.grades.append(grade)
+        else:
+            print(f"Ignored invalid grade: {grade}")
 
- def deleteGrade(self, index): # bad naming + error handling
-     del self.gradez[index] # no try/except
+    def calculate_average(self):
+        """
+        Calculate and return the average of the grades.
+        Returns None if there are no grades.
 
- def report(self): # broken format
-     print("ID: " + self.id)
-     print("Name is: " + self.name)
-     print("Grades Count: " + len(self.gradez)) # type error
-     print("Final Grade = " + self.letter) # undefined
+        Returns:
+            float or None: Average grade or None if no grades exist.
+        """
+        if not self.grades:
+            return None
+        return sum(self.grades) / len(self.grades)
+
+    def check_honor(self):
+        """
+        Check if the student qualifies for honors.
+        Honors is True if average grade is above 90, otherwise False.
+        """
+        avg = self.calculate_average()
+        if avg is not None and avg > 90:
+            self.honor = True
+        else:
+            self.honor = False
+
+    def delete_grade(self, index):
+        """
+        Delete the grade at the specified index if it exists.
+
+        Args:
+            index (int): Index of the grade to delete.
+        """
+        try:
+            del self.grades[index]
+        except IndexError:
+            print(f"Index out of range: {index}")
+
+    def report(self):
+        """
+        Print a report with the student's ID, name, grades count,
+        average grade, honor status, and pass status.
+        """
+        avg = self.calculate_average()
+        avg_str = f"{avg:.2f}" if avg is not None else "N/A"
+        print(f"ID: {self.identification}")
+        print(f"Name: {self.name}")
+        print(f"Grades Count: {len(self.grades)}")
+        print(f"Average Grade: {avg_str}")
+        print(f"Honor: {'Yes' if self.honor else 'No'}")
+        print(f"Passed: {'Yes' if self.is_passed else 'No'}")
+
+    def check_passed(self, passing_grade=60):
+        """
+        Update the pass status based on whether the average grade
+        meets or exceeds the passing grade.
+
+        Args:
+            passing_grade (int or float, optional): Threshold for passing.
+                Defaults to 60.
+        """
+        avg = self.calculate_average()
+        if avg is not None and avg >= passing_grade:
+            self.is_passed = True
+        else:
+            self.is_passed = False
 
 def startrun():
-    a = student("x","")
-    a.addGrades(100)
-    a.addGrades("Fifty") # broken
-    a.calcaverage()
-    a.checkHonor()
-    a.deleteGrade(5) # IndexError
-    a.report()
+    """
+    Demonstrates usage of the Student class.
+    Adds grades, checks pass and honor status, deletes a grade,
+    and prints a report.
+    """
+    student = Student("x123", "John Doe")
+    student.add_grade(100)
+    student.add_grade("Fifty")
+    student.add_grade(75)
 
-startrun()
+    student.check_passed()
+    student.check_honor()
+
+    student.delete_grade(5)
+
+    student.report()
+
+
+if __name__ == "__main__":
+    startrun()
